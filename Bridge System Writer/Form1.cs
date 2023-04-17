@@ -1,10 +1,21 @@
 namespace Bridge_System_Writer
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
-        public Form1()
+        private Control.ControlCollection bidButtons;
+        private BiddingLogic bidController;
+        public MainWindow()
         {
             InitializeComponent();
+
+            bidButtons = bidButtonsBox.Controls;
+            bidController = new BiddingLogic(0, 0, false, bidButtons);
+        }
+
+        private void bidClick(object sender, EventArgs e)
+        {
+            Button senderButton = (Button)sender;
+            bidController.makeBid(senderButton.Text, biddingDisplay);
         }
     }
 }
