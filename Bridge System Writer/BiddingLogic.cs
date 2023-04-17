@@ -36,8 +36,10 @@ namespace Bridge_System_Writer
             passBut = passButton;
             passCount = 0;
             doubleBut = doubleButton;
+            doubleBut.Enabled = false;
             lastBidDouble = false;
             redoubleBut = redoubleButton;
+            redoubleBut.Enabled = false;
             lastBidRedouble = false;
 
             buttons = new Button[35];
@@ -45,6 +47,7 @@ namespace Bridge_System_Writer
             foreach (Button but in bidButtons)
             {
                 buttons[but.TabIndex] = but;
+                but.Enabled = true;
             }
         }
 
@@ -54,7 +57,6 @@ namespace Bridge_System_Writer
             {
                 return;
             }
-
             bidGrid.Rows[biddingRounds].Cells[currentBidder].Value = bid;
 
             if (currentBidder == 3)

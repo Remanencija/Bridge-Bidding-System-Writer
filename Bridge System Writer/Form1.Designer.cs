@@ -83,10 +83,10 @@
             descriptionColumn = new DataGridViewTextBoxColumn();
             buttonUndoBid = new Button();
             textboxCurrentBid = new RichTextBox();
-            groupBox1 = new GroupBox();
+            dealerGroupBox = new GroupBox();
             radioButtonEast = new RadioButton();
             radioButtonNorth = new RadioButton();
-            groupBox2 = new GroupBox();
+            vulnGroupBox = new GroupBox();
             checkBoxVulAny = new CheckBox();
             radioButtonVulBoth = new RadioButton();
             radioButtonVulEW = new RadioButton();
@@ -95,11 +95,12 @@
             buttonRedouble = new Button();
             buttonDouble = new Button();
             buttonPass = new Button();
+            buttonReset = new Button();
             ((System.ComponentModel.ISupportInitialize)biddingDisplay).BeginInit();
             bidButtonsBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewNewBids).BeginInit();
-            groupBox1.SuspendLayout();
-            groupBox2.SuspendLayout();
+            dealerGroupBox.SuspendLayout();
+            vulnGroupBox.SuspendLayout();
             SuspendLayout();
             // 
             // biddingDisplay
@@ -120,10 +121,13 @@
             biddingDisplay.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             biddingDisplay.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             biddingDisplay.Columns.AddRange(new DataGridViewColumn[] { North, East, South, West });
+            biddingDisplay.EditMode = DataGridViewEditMode.EditProgrammatically;
             biddingDisplay.Location = new Point(12, 12);
+            biddingDisplay.MultiSelect = false;
             biddingDisplay.Name = "biddingDisplay";
             biddingDisplay.ReadOnly = true;
             biddingDisplay.RowHeadersVisible = false;
+            biddingDisplay.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             biddingDisplay.RowTemplate.Height = 25;
             biddingDisplay.ScrollBars = ScrollBars.Vertical;
             biddingDisplay.ShowCellErrors = false;
@@ -132,6 +136,7 @@
             biddingDisplay.ShowRowErrors = false;
             biddingDisplay.Size = new Size(295, 191);
             biddingDisplay.TabIndex = 0;
+            biddingDisplay.CellStateChanged += refocusCell;
             // 
             // North
             // 
@@ -658,13 +663,14 @@
             // buttonUndoBid
             // 
             buttonUndoBid.Font = new Font("Segoe UI Black", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            buttonUndoBid.Location = new Point(315, 186);
+            buttonUndoBid.Location = new Point(317, 186);
             buttonUndoBid.Name = "buttonUndoBid";
-            buttonUndoBid.Size = new Size(143, 44);
+            buttonUndoBid.Size = new Size(50, 44);
             buttonUndoBid.TabIndex = 3;
             buttonUndoBid.Text = "←";
             buttonUndoBid.TextAlign = ContentAlignment.TopCenter;
             buttonUndoBid.UseVisualStyleBackColor = true;
+            buttonUndoBid.Click += undoBidClick;
             // 
             // textboxCurrentBid
             // 
@@ -677,16 +683,16 @@
             textboxCurrentBid.TabIndex = 4;
             textboxCurrentBid.Text = "";
             // 
-            // groupBox1
+            // dealerGroupBox
             // 
-            groupBox1.Controls.Add(radioButtonEast);
-            groupBox1.Controls.Add(radioButtonNorth);
-            groupBox1.Location = new Point(315, 12);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(143, 68);
-            groupBox1.TabIndex = 5;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Dealer";
+            dealerGroupBox.Controls.Add(radioButtonEast);
+            dealerGroupBox.Controls.Add(radioButtonNorth);
+            dealerGroupBox.Location = new Point(315, 12);
+            dealerGroupBox.Name = "dealerGroupBox";
+            dealerGroupBox.Size = new Size(143, 68);
+            dealerGroupBox.TabIndex = 5;
+            dealerGroupBox.TabStop = false;
+            dealerGroupBox.Text = "Dealer";
             // 
             // radioButtonEast
             // 
@@ -710,19 +716,19 @@
             radioButtonNorth.Text = "North";
             radioButtonNorth.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
+            // vulnGroupBox
             // 
-            groupBox2.Controls.Add(checkBoxVulAny);
-            groupBox2.Controls.Add(radioButtonVulBoth);
-            groupBox2.Controls.Add(radioButtonVulEW);
-            groupBox2.Controls.Add(radioButtonVulNS);
-            groupBox2.Controls.Add(radioButtonVulNone);
-            groupBox2.Location = new Point(317, 86);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(141, 94);
-            groupBox2.TabIndex = 6;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Vulnerability";
+            vulnGroupBox.Controls.Add(checkBoxVulAny);
+            vulnGroupBox.Controls.Add(radioButtonVulBoth);
+            vulnGroupBox.Controls.Add(radioButtonVulEW);
+            vulnGroupBox.Controls.Add(radioButtonVulNS);
+            vulnGroupBox.Controls.Add(radioButtonVulNone);
+            vulnGroupBox.Location = new Point(317, 86);
+            vulnGroupBox.Name = "vulnGroupBox";
+            vulnGroupBox.Size = new Size(141, 94);
+            vulnGroupBox.TabIndex = 6;
+            vulnGroupBox.TabStop = false;
+            vulnGroupBox.Text = "Vulnerability";
             // 
             // checkBoxVulAny
             // 
@@ -813,6 +819,17 @@
             buttonPass.UseVisualStyleBackColor = true;
             buttonPass.Click += bidClick;
             // 
+            // buttonReset
+            // 
+            buttonReset.Font = new Font("Segoe UI Semilight", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            buttonReset.Location = new Point(373, 186);
+            buttonReset.Name = "buttonReset";
+            buttonReset.Size = new Size(85, 44);
+            buttonReset.TabIndex = 41;
+            buttonReset.Text = "Reset Bids";
+            buttonReset.UseVisualStyleBackColor = true;
+            buttonReset.Click += resetBidsClick;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -820,11 +837,12 @@
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(729, 578);
+            Controls.Add(buttonReset);
             Controls.Add(buttonRedouble);
             Controls.Add(buttonDouble);
             Controls.Add(buttonPass);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
+            Controls.Add(vulnGroupBox);
+            Controls.Add(dealerGroupBox);
             Controls.Add(textboxCurrentBid);
             Controls.Add(buttonUndoBid);
             Controls.Add(dataGridViewNewBids);
@@ -837,10 +855,10 @@
             ((System.ComponentModel.ISupportInitialize)biddingDisplay).EndInit();
             bidButtonsBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridViewNewBids).EndInit();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            dealerGroupBox.ResumeLayout(false);
+            dealerGroupBox.PerformLayout();
+            vulnGroupBox.ResumeLayout(false);
+            vulnGroupBox.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -856,10 +874,10 @@
         private DataGridViewTextBoxColumn descriptionColumn;
         private Button buttonUndoBid;
         private RichTextBox textboxCurrentBid;
-        private GroupBox groupBox1;
+        private GroupBox dealerGroupBox;
         private RadioButton radioButtonEast;
         private RadioButton radioButtonNorth;
-        private GroupBox groupBox2;
+        private GroupBox vulnGroupBox;
         private CheckBox checkBoxVulAny;
         private RadioButton radioButtonVulBoth;
         private RadioButton radioButtonVulEW;
@@ -903,5 +921,6 @@
         private DataGridViewTextBoxColumn East;
         private DataGridViewTextBoxColumn South;
         private DataGridViewTextBoxColumn West;
+        private Button buttonReset;
     }
 }
