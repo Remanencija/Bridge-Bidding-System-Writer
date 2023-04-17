@@ -9,7 +9,7 @@ namespace Bridge_System_Writer
             InitializeComponent();
 
             bidButtons = bidButtonsBox.Controls;
-            bidController = new BiddingLogic(0, 0, false, bidButtons);
+            bidController = new BiddingLogic(0, 0, false, bidButtons, buttonPass, buttonDouble, buttonRedouble);
         }
 
         private void bidClick(object sender, EventArgs e)

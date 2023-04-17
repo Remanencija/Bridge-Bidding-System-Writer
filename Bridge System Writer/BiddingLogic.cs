@@ -16,20 +16,45 @@ namespace Bridge_System_Writer
         private int biddingRounds;
         private int zones;         //0None 1NS 2EW 3Both
         private bool zonesMatter;  //False - zones don't matter - write to all nodes
-        private List<Bids> bids;
-        private Control.ControlCollection buttons;
+        //private List<Bids> bids;
 
-        public BiddingLogic(int currBidder,int zone, bool zoneMatter, Control.ControlCollection bidButtons)
+
+        private Button[] buttons;
+        private Button passBut;
+        private int passCount;
+        private Button doubleBut;
+        private bool lastBidDouble;
+        private Button redoubleBut;
+        private bool lastBidRedouble;
+
+        public BiddingLogic(int currBidder,int zone, bool zoneMatter, Control.ControlCollection bidButtons, Button passButton, Button doubleButton, Button redoubleButton)
         {
             biddingRounds = 0;
             currentBidder = currBidder;
             zones = zone;
             zonesMatter = zoneMatter;
-            buttons = bidButtons;
+            passBut = passButton;
+            passCount = 0;
+            doubleBut = doubleButton;
+            lastBidDouble = false;
+            redoubleBut = redoubleButton;
+            lastBidRedouble = false;
+
+            buttons = new Button[35];
+
+            foreach (Button but in bidButtons)
+            {
+                buttons[but.TabIndex] = but;
+            }
         }
 
         public void makeBid(string bid, DataGridView bidGrid)
         {
+            if (bid == "Pass" && passCount == 2)
+            {
+                return;
+            }
+
             bidGrid.Rows[biddingRounds].Cells[currentBidder].Value = bid;
 
             if (currentBidder == 3)
@@ -49,34 +74,71 @@ namespace Bridge_System_Writer
 
         public void disableButtons(string currentBid)
         {
-            Button[] actualButtons = new Button[35];
-
-            int counter = 0;
-
-            foreach (Button bidButton in buttons)
+            switch (currentBid)
             {
-                actualButtons[counter] = bidButton;
-                counter++;
-            }
+                case "Pass":
+                    passCount++;
+                    switch (passCount)
+                    {
+                        case 1:
+                            doubleBut.Enabled = false;
+                            redoubleBut.Enabled = false;
+                            break;
+                        case 2:
+                            if (lastBidDouble)
+                            {
+                                doubleBut.Enabled = false;
+                                redoubleBut.Enabled = true;
+                            }
+                            else if (lastBidRedouble)
+                            {
+                                doubleBut.Enabled = false;
+                                redoubleBut.Enabled = false;
+                            }
+                            else
+                            {
+                                doubleBut.Enabled = true;
+                                redoubleBut.Enabled = false;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
 
-            int whereToStop = 0;
+                case "X":
+                    lastBidDouble = true;
+                    lastBidRedouble = false;
+                    passCount = 0;
+                    doubleBut.Enabled = false;
+                    redoubleBut.Enabled = true;
+                    break;
 
-            foreach (Button b in actualButtons)
-            {
-                if (b.Text == currentBid)
-                {
-                    whereToStop = b.TabIndex;
-                }
-            }
+                case "XX":
+                    lastBidDouble = false;
+                    lastBidRedouble = true;
+                    passCount = 0;
+                    doubleBut.Enabled = false;
+                    redoubleBut.Enabled = false;
+                    break;
 
-            foreach(Button b in actualButtons)
-            {
-                if (b.TabIndex <= whereToStop)
-                {
-                    b.Enabled = false;
-                }
+                default:
+                    lastBidDouble = false;
+                    lastBidRedouble = false;
+                    passCount = 0;
+                    doubleBut.Enabled = true;
+                    redoubleBut.Enabled = false;
+
+                    foreach (Button b in buttons)
+                    {
+                        b.Enabled = false;
+                        if (b.Text == currentBid)
+                        {
+                            break;
+                        }
+                    }
+                    break;
             }
         }
-
     }
 }
